@@ -4,7 +4,7 @@ API de gestão de loja virtual.
 
 ## Requisitos
 
-A api deve ter o controle de produtos, categorias de produtos, gestao de estoque.
+A api deve ter o [controle de produtos](./controle-produtos.md), [categorias de produtos](./categorias-produtos.md), gestao de estoque.
 A api deve permitir a compra com cartao de credito (dados fictícios).
 A api deve ter usuarios do tipo cliente e loja.
 
