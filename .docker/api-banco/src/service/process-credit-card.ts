@@ -5,7 +5,7 @@ import { HttpClient, PayloadModel } from "@src/service/http-client";
 export class ProcessCreditCard {
 	private transaction: TransactionConsumer;
 	private httpClient: HttpClient;
-	private payment: DefaultTransaction<CreditCard>;
+	private readonly payment: DefaultTransaction<CreditCard>;
 
 	constructor(transaction: TransactionConsumer, httpClient: HttpClient, payment: DefaultTransaction<CreditCard>) {
 		this.transaction = transaction
@@ -16,6 +16,8 @@ export class ProcessCreditCard {
 	async resolveProcess() {
 		const transactionResult = this.transaction.transactionResult(this.payment)
 
+		console.log(transactionResult)
+
 		const payloadResult: PayloadModel = {
 			"transaction-id": this.payment["transaction-id"],
 			"updated-at": new Date().toISOString(),
@@ -23,8 +25,10 @@ export class ProcessCreditCard {
 			"payment-status": "cancelada"
 		}
 
-		if (transactionResult === 'approved')
+		if (transactionResult === 'approved'){
 			payloadResult["payment-status"] = "aprovada"
+			payloadResult.reason = "OK"
+		}
 
 		if (transactionResult === 'analysing') {
 			payloadResult["payment-status"] = "pre-aprovada"

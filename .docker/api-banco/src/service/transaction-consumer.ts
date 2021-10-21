@@ -47,16 +47,18 @@ export class TransactionConsumer {
 	}
 
 	transactionResult(payload: DefaultTransaction<CreditCard>) {
-		let type = 'expired'
-		if (cards.has('approved')) {
-			type = _.identity(payload["payment-info"]) === cards.get('approved') ? 'approved' : 'expired';
+		// @ts-ignore
+		delete payload["payment-info"].value as any
+
+		if (_.isEqual(payload["payment-info"], cards.get('approved'))) {
+			return 'approved';
 		}
 
-		if (cards.has('analysing')) {
-			type = _.identity(payload["payment-info"]) === cards.get('analysing') ? 'analysing' : 'expired';
+		if (_.isEqual(payload["payment-info"], cards.get('analysing'))) {
+			return 'analysing'
 		}
 
-		return type
+		return 'expired'
 	}
 
 	isValidTicket(payload: DefaultTransaction<Ticket>) {
