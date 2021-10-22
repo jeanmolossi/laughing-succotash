@@ -1,6 +1,6 @@
 import { Channel, connect, ConsumeMessage } from 'amqplib';
 
-type Callback = (message: string) => Promise<void> | void;
+type Callback = (message: ConsumeMessage, channel: Channel) => Promise<void> | void;
 
 export class RabbitMQ {
 	private readonly queueName;
@@ -33,9 +33,7 @@ export class RabbitMQ {
 				channel.consume(this.queueName, async(msg: ConsumeMessage | null) => {
 					if (msg !== null) {
 						try {
-							console.log("Reading...")
-							await callback(msg.content.toString())
-							channel.ack(msg)
+							await callback(msg, channel)
 						} catch (e: any) {
 							channel.nack(msg, false, true)
 							console.log("Rabbit com erro " + e.message)

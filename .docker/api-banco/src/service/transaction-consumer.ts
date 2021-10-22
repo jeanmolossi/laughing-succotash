@@ -47,8 +47,7 @@ export class TransactionConsumer {
 	}
 
 	transactionResult(payload: DefaultTransaction<CreditCard>) {
-		// @ts-ignore
-		delete payload["payment-info"].value as any
+		_.unset(payload["payment-info"], 'value')
 
 		if (_.isEqual(payload["payment-info"], cards.get('approved'))) {
 			return 'approved';
@@ -62,27 +61,31 @@ export class TransactionConsumer {
 	}
 
 	isValidTicket(payload: DefaultTransaction<Ticket>) {
-		if (tickets.has('approved')) {
-			return _.identity(payload['payment-info']) === tickets.get('approved')
+		_.unset(payload["payment-info"], 'value')
+
+		if (_.isEqual(payload["payment-info"], tickets.get('approved'))) {
+			return 'approved'
 		}
 
-		if (tickets.has('expired')) {
-			return _.identity(payload['payment-info']) === tickets.get('expired')
+		if (_.isEqual(payload["payment-info"], tickets.get('expired'))) {
+			return 'expired'
 		}
 
-		return false
+		return 'canceled'
 	}
 
 	isValidPix(payload: DefaultTransaction<Pix>) {
-		if (pixs.has('approved')) {
-			return _.identity(payload['payment-info']) === pixs.get('approved')
+		_.unset(payload["payment-info"], 'value')
+
+		if (_.isEqual(payload["payment-info"], pixs.get('approved'))) {
+			return 'approved'
 		}
 
-		if (pixs.has('expired')) {
-			return _.identity(payload['payment-info']) === pixs.get('expired')
+		if (_.isEqual(payload["payment-info"], pixs.get('expired'))) {
+			return 'expired'
 		}
 
-		return false
+		return 'canceled'
 	}
 
 }

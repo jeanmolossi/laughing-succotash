@@ -1,8 +1,10 @@
 import { CreditCard, DefaultTransaction } from "@src/service/transaction-types";
 import { TransactionConsumer } from "@src/service/transaction-consumer";
 import { HttpClient, PayloadModel } from "@src/service/http-client";
+import { ServiceTransaction } from "@src/service/service-transaction";
+import { sleep, Time } from "@src/util";
 
-export class ProcessCreditCard {
+export class ProcessCreditCard implements ServiceTransaction{
 	private transaction: TransactionConsumer;
 	private httpClient: HttpClient;
 	private readonly payment: DefaultTransaction<CreditCard>;
@@ -16,8 +18,6 @@ export class ProcessCreditCard {
 	async resolveProcess() {
 		const transactionResult = this.transaction.transactionResult(this.payment)
 
-		console.log(transactionResult)
-
 		const payloadResult: PayloadModel = {
 			"transaction-id": this.payment["transaction-id"],
 			"updated-at": new Date().toISOString(),
@@ -25,17 +25,23 @@ export class ProcessCreditCard {
 			"payment-status": "cancelada"
 		}
 
+		let time = Time.Minute;
+
 		if (transactionResult === 'approved'){
 			payloadResult["payment-status"] = "aprovada"
 			payloadResult.reason = "OK"
+			time = Time.Millisecond
 		}
 
 		if (transactionResult === 'analysing') {
 			payloadResult["payment-status"] = "pre-aprovada"
 			payloadResult.reason = "Em analise contra fraudes"
+			time = Time.Millisecond
 		}
 
+		await sleep(time)
 		await this.httpClient.post(payloadResult)
+		return payloadResult
 	}
 
 }

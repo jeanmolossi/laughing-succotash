@@ -1,6 +1,6 @@
-import { CreditCard, DefaultTransaction, Pix, Ticket } from "@src/service/transaction-types";
+import { CreditCard, Pix, Ticket } from "@src/service/transaction-types";
 
-type TransactionTypes = 'approved' | 'analysing' | 'expired';
+type TransactionTypes = 'approved' | 'analysing' | 'expired' | 'canceled';
 
 export const cards = new Map<TransactionTypes, CreditCard>([
 	[ 'approved', {
