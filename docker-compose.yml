@@ -6,6 +6,7 @@ services:
     build: .docker/api-banco
     volumes:
       - .docker/api-banco:/api
+      - .docker/api-banco/node_modules:/api/node_modules
     ports:
       - "3000:3000"
     networks:
